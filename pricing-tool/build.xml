@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<project name="PricingProject" default="apijar" basedir=".">
+
+	<taskdef name="one-jar" classname="com.simontuffs.onejar.ant.OneJarTask" classpath="lib/one-jar-ant-task-0.97.jar" onerror="report" />
+
+	<target name="init">
+		<tstamp />
+
+		<property name="src.dir" value="src" />
+		<property name="conf.dir" value="conf" />
+		<property name="build.dir" value="build" />
+		<property name="lib.dir" value="lib" />
+		<property name="dist.dir" value="dist" />
+		<property name="main.class" value="net.pricing.common.main.Main" />
+
+		<property name="compile.debug" value="true" />
+		<property name="compile.optimize" value="true" />
+		<property name="compile.target" value="1.7" />
+		<property name="compile.source" value="1.7" />
+		<property name="compile.deprecation" value="true" />
+
+		<path id="compile.class.path">
+			<fileset dir="${lib.dir}" />
+		</path>
+	</target>
+
+	<target name="prepare" depends="init">
+		<mkdir dir="${build.dir}" />
+	</target>
+
+
+	<target name="compile" depends="prepare" description="Compiles the source code">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" debug="${compile.debug}" optimize="${compile.optimize}" target="${compile.target}" source="${compile.source}" deprecation="${compile.deprecation}" includeAntRuntime="false">
+			<classpath refid="compile.class.path" />
+		</javac>
+		<copy todir="${build.dir}/openscope">
+			<fileset dir="${conf.dir}">
+				<include name="*.properties" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="mainjar" depends="compile">
+		<jar jarfile="${dist.dir}/main.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Date" value="${timestamp}" />
+				<attribute name="Main-Class" value="${main.class}" />
+			</manifest>
+			<fileset dir="${build.dir}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${build.dir}/openscope">
+				<include name="com/openscope/**" />
+				<include name="*.properties" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="apijar" depends="compile">
+		<jar jarfile="${dist.dir}/pricing.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Date" value="${timestamp}" />
+				<attribute name="Main-Class" value="${main.class}" />
+			</manifest>
+			<fileset dir="${build.dir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="clean" description="clean up">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="onejar" depends="mainjar">
+
+		<one-jar destfile="${dist.dir}/${ant.project.name}.jar">
+			<main jar="${dist.dir}/main.jar">
+			</main>
+			<lib>
+				<fileset dir="${lib.dir}">
+					<exclude name="one-jar-ant-task*.jar" />
+				</fileset>
+			</lib>
+		</one-jar>
+	</target>
+</project>
