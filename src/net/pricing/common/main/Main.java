@@ -64,5 +64,7 @@ public class Main {
 			logger.error("UNKNOWN COMMAND");
 		}
 
+		System.exit(0);
+
 	}
 }
