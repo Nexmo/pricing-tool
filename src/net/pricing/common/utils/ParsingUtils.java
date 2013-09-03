@@ -36,6 +36,9 @@ import org.apache.log4j.Logger;
 import net.pricing.common.config.AppConfiguration;
 import net.pricing.common.mail.validator.NetworkValidator;
 import net.pricing.common.mail.validator.NetworkValidatorFactory;
+import net.pricing.common.utils.PricingColumn;
+import net.pricing.common.utils.PricingConstants;
+import net.pricing.common.utils.PricingRow;
 
 /**
  * @author Yuliia Petrushenko
@@ -146,10 +149,8 @@ public class ParsingUtils {
 		return returnList;
 	}
 
-	public static List<PricingRow> splitMCCMNC(List<PricingRow> rowList,
-			String columnName, String delimiter) {
-		List<PricingRow> returnList = new ArrayList<PricingRow>();
-
+	public static void splitMCCMNC(List<PricingRow> rowList, String columnName,
+			String delimiter) {
 		PricingColumn column = null;
 		String[] splitedColumn = null;
 		for (PricingRow currentRow : rowList) {
@@ -168,7 +169,6 @@ public class ParsingUtils {
 				}
 			}
 		}
-		return returnList;
 	}
 
 	/**
