@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.pricing.common.parser.helper.CSVParser;
 import net.pricing.common.utils.FileUtils;
 import net.pricing.common.utils.PricingColumn;
 import net.pricing.common.utils.PricingConstants;
@@ -64,12 +65,11 @@ public class CSVParser {
 			DataInputStream in = new DataInputStream(fileIn);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String strHeader = br.readLine();
-			findHeaderColumns(strHeader.replace("\"", ""));
+			findHeaderColumns(strHeader);
 			String strLine = new String();
 			resultList = new ArrayList<PricingRow>();
 			while ((strLine = br.readLine()) != null) {
 				PricingRow pricingRow = new PricingRow();
-				strLine = strLine.replace("\"", "");
 				String[] array = strLine.split(delimiter);
 				for (int i = 0; i < array.length; i++) {
 					for (PricingColumn currentColumn : columnsIndexing) {
@@ -115,9 +115,9 @@ public class CSVParser {
 		String[] strHeaderArr = headerRow.toLowerCase().split(this.delimiter);
 		for (int i = 0; i < strHeaderArr.length; i++) {
 			for (int j = 0; j < this.columns.length; j++) {
-
-				if (strHeaderArr[i].toLowerCase().equals(
-						columns[j].toLowerCase())) {
+				String currentName = strHeaderArr[i].toLowerCase().replace(
+						"\"", "");
+				if (currentName.equals(columns[j].toLowerCase())) {
 					PricingColumn currentColumn = new PricingColumn();
 					currentColumn.setIndex(i);
 					currentColumn.setName(columns[j]);
