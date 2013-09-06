@@ -114,10 +114,10 @@ public class CSVParser {
 	private void findHeaderColumns(String headerRow) {
 		String[] strHeaderArr = headerRow.toLowerCase().split(this.delimiter);
 		for (int i = 0; i < strHeaderArr.length; i++) {
+			String currentName = strHeaderArr[i].toLowerCase()
+					.replace("\"", "").trim();
 			for (int j = 0; j < this.columns.length; j++) {
-				String currentName = strHeaderArr[i].toLowerCase().replace(
-						"\"", "");
-				if (currentName.equals(columns[j].toLowerCase())) {
+				if (currentName.equals(columns[j].toLowerCase().trim())) {
 					PricingColumn currentColumn = new PricingColumn();
 					currentColumn.setIndex(i);
 					currentColumn.setName(columns[j]);
