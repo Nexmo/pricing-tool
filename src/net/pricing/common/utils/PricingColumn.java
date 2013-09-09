@@ -27,7 +27,6 @@ package net.pricing.common.utils;
  * @version
  */
 public class PricingColumn {
-
 	private Integer index;
 	private String name;
 	private String value;
@@ -63,6 +62,11 @@ public class PricingColumn {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "[name=" + name + ", value=" + value + "]";
 	}
 
 }

@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -35,30 +36,103 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.pricing.common.utils.FileUtils;
 import net.pricing.common.utils.PricingColumn;
 import net.pricing.common.utils.PricingConstants;
 import net.pricing.common.utils.PricingRow;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @author Yuliia Petrushenko
  * @version
  */
-public abstract class POIExcelParser {
+public class POIExcelParser {
 
 	private static final Logger logger = Logger.getLogger(POIExcelParser.class);
 
 	protected String[] columns;
 	protected List<PricingColumn> columnsIndexing;
 
-	public abstract List<PricingRow> parseFromExcel(String[] columns,
-			File file, Integer... sheetNbrs) throws IOException;
+	public List<PricingRow> parseFromExcel(String[] columns, File file,
+			Integer... sheetNbrs) throws IOException {
+		int sheetNbr = 0;
+		if (sheetNbrs != null && sheetNbrs.length >= 1) {
+			sheetNbr = sheetNbrs[0];
+		}
 
-	public abstract File parseToExcel(File file);
+		List<PricingRow> rowList = new ArrayList<PricingRow>();
+
+		if (!(FileUtils.isFileExtMatchesTheParser(file.getName(),
+				PricingConstants.XLSX_FILE_EXTENSION) || FileUtils
+				.isFileExtMatchesTheParser(file.getName(),
+						PricingConstants.XLS_FILE_EXTENSION))) {
+			logger.debug("[isFileExtMatchesTheParser] ---------> FILE EXTENSION DOES NOT MATCH THE PARSER");
+			return rowList;
+		}
+		this.columns = new String[columns.length];
+		this.columns = columns;
+		columnsIndexing = new ArrayList<PricingColumn>();
+
+		logger.debug("[parseFromExcel] ---------> Start Excel file parsing");
+
+		FileInputStream fileIn = null;
+		Sheet sheet = null;
+
+		try {
+			fileIn = new FileInputStream(file);
+			HSSFWorkbook workbook = new HSSFWorkbook(fileIn);
+			sheet = workbook.getSheetAt(sheetNbr);
+		} catch (OfficeXmlFileException ex) {
+			fileIn = new FileInputStream(file);
+			XSSFWorkbook workbook = new XSSFWorkbook(fileIn);
+			sheet = workbook.getSheetAt(sheetNbr);
+		}
+
+		Iterator<Row> rowIterator = sheet.iterator();
+
+		findHeaderColumns(rowIterator);
+		rowList = this.parseFromExcel(rowIterator);
+		fileIn.close();
+		logger.debug("[parseFromExcel] ---------> Parsing completed");
+		return rowList;
+	}
+
+	public File parseToExcel(File file, String extention) {
+		if (!FileUtils.isFileExtMatchesTheParser(file.getName(),
+				PricingConstants.CSV_FILE_EXTENSION)) {
+			return null;
+		}
+		Workbook workbook = null;
+		if (PricingConstants.XLS_FILE_EXTENSION.equalsIgnoreCase(extention)) {
+			workbook = new HSSFWorkbook();
+		}
+		if (PricingConstants.XLSX_FILE_EXTENSION.equalsIgnoreCase(extention)) {
+			workbook = new XSSFWorkbook();
+		}
+
+		parseToExcel(file, workbook.createSheet());
+		File xlsFile = null;
+		try {
+			xlsFile = FileUtils.createFile(PricingConstants.TEMP_FOLDER_NAME
+					+ "priceUpdates." + extention);
+			FileOutputStream out = new FileOutputStream(xlsFile);
+
+			workbook.write(out);
+			out.close();
+			logger.debug("[parseToExcel]--------->Excel file was written successfully..");
+		} catch (IOException e) {
+			logger.error("[parseToExcel] IOException " + e.getMessage());
+		}
+		return xlsFile;
+	}
 
 	protected void findHeaderColumns(Iterator<Row> rowIterator) {
 		Row headerRow = rowIterator.next();

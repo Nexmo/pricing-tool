@@ -28,8 +28,6 @@ import javax.mail.Message;
 
 import net.pricing.common.parser.Parser;
 import net.pricing.common.parser.helper.ExcelParser;
-import net.pricing.common.parser.helper.POIExcelParser;
-import net.pricing.common.parser.helper.XLSParser;
 import net.pricing.common.utils.FileUtils;
 import net.pricing.common.utils.ParsingUtils;
 import net.pricing.common.utils.PricingConstants;
@@ -40,7 +38,6 @@ import net.pricing.common.utils.PricingRow;
  * @version
  */
 public class MySampleParser implements Parser {
-
 	private static final String MCCMNC = "mccmnc";
 	private static final String PRICE = "price";
 	private static final String CHANGE = "change";
@@ -76,10 +73,8 @@ public class MySampleParser implements Parser {
 			currentRow.changeColumnValue(MCCMNC, newValue);
 		}
 
-		ParsingUtils.validateNumericValues(rows, MCCMNC);
-		ParsingUtils.validateNumericValues(rows, PRICE);
-
 		ParsingUtils.validateNetworkCode(rows, MCCMNC);
+		ParsingUtils.validatePrice(rows, PRICE);
 
 		ParsingUtils.removeDuplicateNetworks(rows, MCCMNC, 0);
 
@@ -92,8 +87,7 @@ public class MySampleParser implements Parser {
 
 	@Override
 	public File parseFromCsv(File file) {
-		POIExcelParser parser = new XLSParser();
-		return parser.parseToExcel(file);
+		return new ExcelParser().parseToXLS(file);
 	}
 
 	@Override

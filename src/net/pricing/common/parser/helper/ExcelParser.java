@@ -22,12 +22,10 @@
 package net.pricing.common.parser.helper;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import net.pricing.common.utils.FileUtils;
 import net.pricing.common.utils.PricingConstants;
 import net.pricing.common.utils.PricingRow;
 
@@ -43,24 +41,24 @@ public class ExcelParser {
 	public List<PricingRow> parseFromExcel(String[] columns, File file,
 			Integer... sheetIndex) {
 		try {
-			if (PricingConstants.XLS_FILE_EXTENSION.equals(FileUtils
-					.getExtension(file.getName()))) {
-				return new XLSParser()
-						.parseFromExcel(columns, file, sheetIndex);
-			} else if (PricingConstants.XLSX_FILE_EXTENSION.equals(FileUtils
-					.getExtension(file.getName()))) {
-				return new XLSXParser().parseFromExcel(columns, file,
-						sheetIndex);
-			} else {
-				logger.debug("[parseFromExcel] ---------> File extension does not match the parser");
-				return Collections.emptyList();
-			}
-
+			return new POIExcelParser().parseFromExcel(columns, file,
+					sheetIndex);
 		} catch (Exception e) {
-			logger.debug("[parseFromExcel] Exception using Apache POI" + e.toString() +"\n Launching JXLExcelParser..");
+			logger.debug("[parseFromExcel] Exception using Apache POI"
+					+ e.toString() + "\n Launching JXLExcelParser..");
 			return new JXLExcelParser().parseFromExcel(file, columns,
 					sheetIndex);
 		}
 
+	}
+
+	public File parseToXLSX(File file) {
+		return new POIExcelParser().parseToExcel(file,
+				PricingConstants.XLSX_FILE_EXTENSION);
+	}
+
+	public File parseToXLS(File file) {
+		return new POIExcelParser().parseToExcel(file,
+				PricingConstants.XLS_FILE_EXTENSION);
 	}
 }

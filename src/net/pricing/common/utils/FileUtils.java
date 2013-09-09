@@ -122,7 +122,6 @@ public class FileUtils {
 	public static boolean isFileExtMatchesTheParser(String fileName,
 			String extension) {
 		if (!extension.equals(getExtension(fileName))) {
-			logger.debug("[isFileExtMatchesTheParser] ---------> FILE EXTENSION DOES NOT MATCH THE PARSER");
 			return false;
 		}
 		return true;

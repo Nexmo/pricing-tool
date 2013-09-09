@@ -214,18 +214,21 @@ public class ParsingUtils {
 	 *            String name of columns to be validated
 	 */
 	public static void validateNetworkCode(List<PricingRow> rowList,
-			String column) {
+			String columnName) {
+		validateNumericValues(rowList, columnName);
 		NetworkValidator networkValidator = NetworkValidatorFactory
 				.getInstance(AppConfiguration
 						.getProperty(PricingConstants.VALIDATOR_CLASS_PATH));
 
 		for (PricingRow currentRow : rowList) {
-			String code = currentRow.getColumnByName(column).getValue();
-			String newCode = networkValidator.validateNetwork(code);
-			if (newCode == null) {
-				currentRow.setErrorRow(true);
-			} else {
-				currentRow.getColumnByName(column).setValue(newCode);
+			if (!currentRow.isErrorRow()) {
+				String code = currentRow.getColumnByName(columnName).getValue();
+				String newCode = networkValidator.validateNetwork(code);
+				if (newCode == null) {
+					currentRow.setErrorRow(true);
+				} else {
+					currentRow.getColumnByName(columnName).setValue(newCode);
+				}
 			}
 		}
 	}
@@ -430,4 +433,20 @@ public class ParsingUtils {
 		}
 	}
 
+	public static void validatePrice(List<PricingRow> rows, String columnName) {
+		validateNumericValues(rows, columnName);
+		for (PricingRow currentRow : rows) {
+			if (!currentRow.isErrorRow()) {
+				PricingColumn currentColumn = currentRow
+						.getColumnByName(columnName);
+				if (currentColumn != null
+						&& Double.valueOf(currentColumn.getValue()) > 1.0) {
+					currentRow.setErrorRow(true);
+					logger.error("[validatePrice] Price is suspicious\n"
+							+ currentRow.toString());
+				}
+
+			}
+		}
+	}
 }

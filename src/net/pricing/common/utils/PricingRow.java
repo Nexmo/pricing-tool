@@ -91,7 +91,15 @@ public class PricingRow {
 				toRemove = currentColumn;
 			}
 		}
-
 		this.columns.remove(toRemove);
+	}
+
+	@Override
+	public String toString() {
+		String returnString = "PricingRow [index=" + index + "\ncolumns:\n";
+		for (PricingColumn currentColumn : columns) {
+			returnString += currentColumn.toString() + "\n";
+		}
+		return returnString + "isErrorRow=" + isErrorRow + "]";
 	}
 }
