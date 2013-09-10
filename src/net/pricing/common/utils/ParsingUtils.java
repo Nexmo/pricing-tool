@@ -440,7 +440,8 @@ public class ParsingUtils {
 				PricingColumn currentColumn = currentRow
 						.getColumnByName(columnName);
 				if (currentColumn != null
-						&& Double.valueOf(currentColumn.getValue()) > 1.0) {
+						&& (currentColumn.getValue().isEmpty() || Double
+								.valueOf(currentColumn.getValue()) > 1.0)) {
 					currentRow.setErrorRow(true);
 					logger.error("[validatePrice] Price is suspicious\n"
 							+ currentRow.toString());
