@@ -21,12 +21,9 @@
  */
 package net.pricing.common.parser.helper;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +34,8 @@ import net.pricing.common.utils.PricingRow;
 
 import org.apache.log4j.Logger;
 
+import au.com.bytecode.opencsv.CSVReader;
+
 /**
  * @author Yuliia Petrushenko
  * @version
@@ -46,7 +45,6 @@ public class CSVParser {
 	private static final Logger logger = Logger.getLogger(CSVParser.class);
 	private String[] columns;
 	private List<PricingColumn> columnsIndexing;
-	private String delimiter;
 
 	public List<PricingRow> parseFile(File file, String[] columns,
 			String delimiter) {
@@ -56,29 +54,26 @@ public class CSVParser {
 		this.columns = new String[columns.length];
 		this.columns = columns;
 		columnsIndexing = new ArrayList<PricingColumn>();
-		this.delimiter = delimiter;
 
 		try {
 			logger.debug("[parserFile] ---------> Start CSV file parsing");
-			FileInputStream fileIn = new FileInputStream(file);
-			DataInputStream in = new DataInputStream(fileIn);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			String strHeader = br.readLine();
-			findHeaderColumns(strHeader);
-			String strLine = new String();
+
+			CSVReader reader = new CSVReader(new FileReader(file),
+					delimiter.charAt(0), '"');
+			String[] nextLine = reader.readNext();
+			findHeaderColumns(nextLine);
+
 			resultList = new ArrayList<PricingRow>();
-			while ((strLine = br.readLine()) != null) {
+			while ((nextLine = reader.readNext()) != null) {
 				PricingRow pricingRow = new PricingRow();
-				String[] array = strLine.split(delimiter);
-				for (int i = 0; i < array.length; i++) {
+				for (int i = 0; i < nextLine.length; i++) {
 					for (PricingColumn currentColumn : columnsIndexing) {
 						if (currentColumn.getIndex() == i) {
 							PricingColumn pColumn = new PricingColumn();
 							pColumn.setIndex(currentColumn.getIndex());
 							pColumn.setName(currentColumn.getName());
-							pColumn.setValue(array[i]);
+							pColumn.setValue(nextLine[i]);
 							pricingRow.addColumn(pColumn);
-
 						}
 
 					}
@@ -93,7 +88,7 @@ public class CSVParser {
 				}
 
 			}
-			in.close();
+			reader.close();
 			logger.debug("[parseFile] ---------> Parsing completed");
 		} catch (IOException e) {
 			logger.error("[parseFile] --> IOException" + e.getMessage());
@@ -110,11 +105,9 @@ public class CSVParser {
 		return file;
 	}
 
-	private void findHeaderColumns(String headerRow) {
-		String[] strHeaderArr = headerRow.toLowerCase().split(this.delimiter);
-		for (int i = 0; i < strHeaderArr.length; i++) {
-			String currentName = strHeaderArr[i].toLowerCase()
-					.replace("\"", "").trim();
+	private void findHeaderColumns(String[] headerArr) {
+		for (int i = 0; i < headerArr.length; i++) {
+			String currentName = headerArr[i].toLowerCase();
 			for (int j = 0; j < this.columns.length; j++) {
 				if (currentName.equals(columns[j].toLowerCase().trim())) {
 					PricingColumn currentColumn = new PricingColumn();
