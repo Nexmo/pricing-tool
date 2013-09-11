@@ -60,8 +60,11 @@ public class CSVParser {
 
 			CSVReader reader = new CSVReader(new FileReader(file),
 					delimiter.charAt(0), '"');
-			String[] nextLine = reader.readNext();
-			findHeaderColumns(nextLine);
+			String[] nextLine;
+			while (columnsIndexing.isEmpty()
+					&& (nextLine = reader.readNext()) != null) {
+				findHeaderColumns(nextLine);
+			}
 
 			resultList = new ArrayList<PricingRow>();
 			while ((nextLine = reader.readNext()) != null) {
@@ -107,9 +110,11 @@ public class CSVParser {
 
 	private void findHeaderColumns(String[] headerArr) {
 		for (int i = 0; i < headerArr.length; i++) {
-			String currentName = headerArr[i].toLowerCase();
+			String currentName = headerArr[i].toLowerCase().replaceAll(" ", "");
 			for (int j = 0; j < this.columns.length; j++) {
-				if (currentName.equals(columns[j].toLowerCase().trim())) {
+				String columnName = columns[j].toLowerCase()
+						.replaceAll(" ", "");
+				if (currentName.equals(columnName)) {
 					PricingColumn currentColumn = new PricingColumn();
 					currentColumn.setIndex(i);
 					currentColumn.setName(columns[j]);
@@ -117,6 +122,9 @@ public class CSVParser {
 					break;
 				}
 			}
+		}
+		if (columnsIndexing.size() != columns.length) {
+			columnsIndexing.clear();
 		}
 	}
 

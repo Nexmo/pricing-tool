@@ -36,9 +36,6 @@ import org.apache.log4j.Logger;
 import net.pricing.common.config.AppConfiguration;
 import net.pricing.common.mail.validator.NetworkValidator;
 import net.pricing.common.mail.validator.NetworkValidatorFactory;
-import net.pricing.common.utils.PricingColumn;
-import net.pricing.common.utils.PricingConstants;
-import net.pricing.common.utils.PricingRow;
 
 /**
  * @author Yuliia Petrushenko
@@ -369,9 +366,12 @@ public class ParsingUtils {
 	public static void changeFloatingPoint(List<PricingRow> rows,
 			String columnName, String symbForChange) {
 		for (PricingRow currentRow : rows) {
-			String oldValue = currentRow.getColumnByName(columnName).getValue();
-			currentRow.getColumnByName(columnName).setValue(
-					oldValue.replace(symbForChange, "."));
+			if (currentRow.getColumnByName(columnName) != null) {
+				String oldValue = currentRow.getColumnByName(columnName)
+						.getValue();
+				currentRow.getColumnByName(columnName).setValue(
+						oldValue.replace(symbForChange, "."));
+			}
 		}
 	}
 
@@ -450,4 +450,5 @@ public class ParsingUtils {
 			}
 		}
 	}
+
 }
