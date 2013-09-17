@@ -273,13 +273,8 @@ public class FileUtils {
 					+ Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
 					+ Calendar.getInstance().get(Calendar.MINUTE)
 					+ Calendar.getInstance().get(Calendar.MILLISECOND);
-			returnFile = FileUtils.createFile(AppConfiguration
-					.getProperty(filePath)
-					+ "/"
-					+ fileName
-					+ "_"
-					+ dateIdentifier
-					+ "."
+			returnFile = FileUtils.createFile(filePath + "/" + fileName + "_"
+					+ dateIdentifier + "."
 					+ PricingConstants.CSV_FILE_EXTENSION);
 
 			FileWriter fstream = new FileWriter(returnFile);
@@ -309,14 +304,14 @@ public class FileUtils {
 		}
 		if (!errorList.isEmpty()) {
 			logger.debug("[saveCsvFile] ---------> THERE WAS SOME ERRORS DURING PARSING");
-			saveCsvFile(errorList, "error_" + fileName,
-					PricingConstants.ERROR_FILE_STORAGE, columns);
+			saveCsvFile(errorList, "error_" + fileName, filePath + "/error",
+					columns);
 			if (errorList.size() == listToWrite.size()) {
 				returnFile.delete();
 			}
 		}
 		logger.debug("[saveCsvFile] ---------> " + fileName + " was saved to "
-				+ AppConfiguration.getProperty(filePath));
+				+ filePath);
 		return returnFile;
 	}
 
