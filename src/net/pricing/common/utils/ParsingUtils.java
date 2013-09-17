@@ -31,6 +31,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.apache.log4j.Logger;
 
 import net.pricing.common.config.AppConfiguration;
@@ -449,6 +452,26 @@ public class ParsingUtils {
 
 			}
 		}
+	}
+
+	/**
+	 * Check if incoming string is a valid email address
+	 * 
+	 * @param email
+	 *            String
+	 * @return true if the string i valid email address
+	 */
+	public static boolean isValidEmailAddress(String email) {
+		boolean result = true;
+		try {
+			InternetAddress emailAddr = new InternetAddress(email);
+			emailAddr.validate();
+		} catch (AddressException e) {
+			logger.error("[isValidEmailAddress] AddressException "
+					+ e.toString());
+			result = false;
+		}
+		return result;
 	}
 
 }

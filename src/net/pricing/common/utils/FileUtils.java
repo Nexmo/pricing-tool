@@ -38,9 +38,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-
 import net.pricing.common.config.AppConfiguration;
 
 import org.apache.log4j.Logger;
@@ -222,26 +219,6 @@ public class FileUtils {
 		}
 		return f;
 
-	}
-
-	/**
-	 * Check if incoming string is a valid email address
-	 * 
-	 * @param email
-	 *            String
-	 * @return true if the string i valid email address
-	 */
-	public static boolean isValidEmailAddress(String email) {
-		boolean result = true;
-		try {
-			InternetAddress emailAddr = new InternetAddress(email);
-			emailAddr.validate();
-		} catch (AddressException e) {
-			logger.error("[isValidEmailAddress] AddressException "
-					+ e.toString());
-			result = false;
-		}
-		return result;
 	}
 
 	/**

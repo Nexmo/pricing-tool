@@ -35,6 +35,7 @@ import net.pricing.common.mail.generator.MailGeneratorImpl;
 import net.pricing.common.parser.Parser;
 import net.pricing.common.parser.ParserSelectorImpl;
 import net.pricing.common.utils.FileUtils;
+import net.pricing.common.utils.ParsingUtils;
 import net.pricing.common.utils.PricingConstants;
 
 import org.apache.log4j.Logger;
@@ -95,7 +96,7 @@ public class ConverterToMailImpl implements ConverterToMail {
 			String strLine;
 
 			while ((strLine = br.readLine()) != null) {
-				if (FileUtils.isValidEmailAddress(strLine)) {
+				if (ParsingUtils.isValidEmailAddress(strLine)) {
 					emailList.add(strLine);
 				}
 			}
