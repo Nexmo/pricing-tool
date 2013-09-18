@@ -427,10 +427,9 @@ public class ParsingUtils {
 	public static void replaceValues(List<PricingRow> rows, String columnName,
 			String valueToReplace, String newValue) {
 		for (PricingRow currentRow : rows) {
-			String columnValue = currentRow.getColumnByName(columnName)
-					.getValue();
-			if (columnValue != null
-					&& columnValue.equalsIgnoreCase(valueToReplace)) {
+			PricingColumn column = currentRow.getColumnByName(columnName);
+			if (column != null
+					&& column.getValue().equalsIgnoreCase(valueToReplace)) {
 				currentRow.getColumnByName(columnName).setValue(newValue);
 			}
 		}
