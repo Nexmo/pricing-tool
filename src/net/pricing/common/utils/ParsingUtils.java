@@ -185,8 +185,8 @@ public class ParsingUtils {
 			if (!currentRow.isErrorRow()) {
 				PricingColumn currentColumn = currentRow
 						.getColumnByName(columnName);
-				if (currentColumn != null
-						&& !isNumeric(currentColumn.getValue())) {
+				if (currentColumn == null
+						|| !isNumeric(currentColumn.getValue())) {
 					currentRow.setErrorRow(true);
 				}
 			}
@@ -221,7 +221,8 @@ public class ParsingUtils {
 						.getProperty(PricingConstants.VALIDATOR_CLASS_PATH));
 
 		for (PricingRow currentRow : rowList) {
-			if (!currentRow.isErrorRow()) {
+			if (!currentRow.isErrorRow()
+					&& currentRow.getColumnByName(columnName) != null) {
 				String code = currentRow.getColumnByName(columnName).getValue();
 				String newCode = networkValidator.validateNetwork(code);
 				if (newCode == null) {
@@ -295,6 +296,8 @@ public class ParsingUtils {
 			int startIndex = rowList.indexOf(currentRow);
 			for (int i = startIndex; i < size; i++) {
 				if (i != rowList.indexOf(currentRow)
+						&& currentRow.getColumnByName(column) != null
+						&& rowList.get(i).getColumnByName(column) != null
 						&& (currentRow.getColumnByName(column).getValue())
 								.equals(rowList.get(i).getColumnByName(column)
 										.getValue())) {
