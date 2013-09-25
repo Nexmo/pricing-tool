@@ -38,8 +38,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import net.pricing.common.config.AppConfiguration;
-
 import org.apache.log4j.Logger;
 
 /**
@@ -292,12 +290,10 @@ public class FileUtils {
 		return returnFile;
 	}
 
-	public static void moveFileToArchive(File file) {
+	public static void moveFileToArchive(File file, String destinationPath) {
 		InputStream in;
 		try {
-			File archiveFile = FileUtils.createFile(AppConfiguration
-					.getProperty(PricingConstants.ARCHIVES_FILE_STORAGE)
-					+ "/"
+			File archiveFile = FileUtils.createFile(destinationPath + "/"
 					+ file.getName());
 			in = new FileInputStream(file);
 			OutputStream out = new FileOutputStream(archiveFile);
@@ -317,17 +313,17 @@ public class FileUtils {
 		}
 	}
 
-	public static void moveFilesToArchive(String namePattern) {
+	public static void moveFiles(String namePattern, String pathFrom,
+			String destinationPath) {
 		File[] fList;
-		File directory = new File(
-				AppConfiguration.getProperty(PricingConstants.FILE_STORAGE));
+		File directory = new File(pathFrom);
 		fList = directory.listFiles();
 		if (fList != null) {
 			for (int i = 0; i < fList.length; i++) {
 				if (fList[i].isFile()
 						&& fList[i].getName().toLowerCase()
 								.contains(namePattern.toLowerCase())) {
-					moveFileToArchive(fList[i]);
+					moveFileToArchive(fList[i], destinationPath);
 				}
 			}
 		}
