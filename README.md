@@ -54,7 +54,3 @@ Configuration of the "pricing project":
 
 	xyz@acme=net.pricing.common.parser.impl.MyAcmeParser;all
 
-
-
-
-Pricing Exchange Management
