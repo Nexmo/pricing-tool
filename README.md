@@ -1,11 +1,11 @@
 pricing-tool
 ============
 
-Automatically extract data of interest from a table sent via e-mail, to create a csv file.
+Summary: Extract information of interest from incoming emails, according to corresponding custom parsers.
 
-This Java library will connect to a mail server via SMTP to download email messages and then parse an html table in the body of the message, or an attached csv file, or Excel spreadsheet of each message based on a specified parser class. The output will be a csv file containing only the data of interest as indicated in the parser class. You will need to construct your own parser class for each incoming email address/data source. 
+This Java library will connect to a mail server via SMTP to download email messages and then parse data in the body of the message, or in an attached csv file or Excel spreadsheet, according to a specified parser class. The output will be a csv file containing only the data of interest as indicated in the parser class. You will need to construct your own parser class for each incoming email address/data source. 
 
-We have provided an example general configuration (config.properties), parser configuration (parsers_config.properties), and parser class (MySampleParser.java) for you to use when building your project. Our example parses incoming mail for network-specific pricing data.
+We have provided an example general configuration (config.properties), parser configuration (parsers_config.properties), and parser class (MySampleParser.java) for you to use when building your project. Our example project parses incoming mail for network-specific pricing data.
 
 Requirements:
 		JDK 1.7
